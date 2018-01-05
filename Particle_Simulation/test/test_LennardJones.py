@@ -21,6 +21,16 @@ class test_LennardJones(unittest.TestCase):
         particle_2 = Particle(position=np.array([2, 3.5, 6]), type_index=1)
         distance = LennardJones._calculate_distance(particle_1, particle_2)
         npt.assert_equal(reference_distance, distance, 'Failed', verbose=True)
+		
+	def test_calculate_distance_pbc(self):
+        reference_distance = 2.5
+        particle_type = ParticleType(name ='a', mass= 0.5, charge=0.2, lj_epsilon=1.2, lj_sigma =3.5 )
+        particle_type = np.array([particle_type])
+        Parameters_1 = Parameters(temperature=0,box=np.array([12]), es_sigma=1,update_radius=1, particle_types=particle_type,cutoff_radius=3 )
+        particle_1 = Particle(position=np.array([1.5]), type_index=1)
+        particle_2 = Particle(position=np.array([11]), type_index=1)
+        distance = LennardJones._calculate_distance(particle_1, particle_2)
+        npt.assert_equal(reference_distance, distance, 'Failed', verbose=True)
 
     def test_calculate_lennardjones_potential(self):
         reference_potential = -0.000042499
