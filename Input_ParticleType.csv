@@ -1,0 +1,4 @@
+name,mass,charge,lj_sigma,lj_epsilon
+Natrium,2,2,1.25,0.5
+B,0.3,2.2,0.4,2.5
+C,0.3,2.2,8.854187817e-12,8.854187817e-12
