@@ -3,9 +3,6 @@ import math
 from numba import jitclass
 from numba import float64, float32, int8, int32, int16, int64
 
-from System import System
-from Energy import Energy
-
 
 specs = [
     ('particle_positions', float64[:, :]),
