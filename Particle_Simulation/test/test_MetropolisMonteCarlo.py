@@ -37,45 +37,6 @@ class TestMetropolisMonteCarlo(unittest.TestCase):
 
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
 
-    # type_index_negative
-    @unittest.expectedFailure
-    def test__generate_trial_position_3(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-
-    # negative_temprature
-    def test__generate_trial_position_4(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=-1, box=np.array([12., 13., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5, K_cutoff=1)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-
-    # negaive_vlaue_sigma
-    @unittest.expectedFailure
-    def test__generate_trial_position_5(self):
-        particle_type = ParticleType(name="test_element", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=-2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=120, box=np.array([12., 13., 13.]), es_sigma=-0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-
-    # negaive_value_cutoff
-    @unittest.expectedFailure
-    def test__generate_trial_position_6(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=120, box=np.array([12., 13., 13.]), es_sigma=-0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=-0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-
     def test_shift_position(self):
         particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
         particle_type = np.array([particle_type])
