@@ -2,8 +2,6 @@ import numpy as np
 
 
 class Parameters:
-    VACUUM_PERMITTIVITY = 1
-    BOLTZMANN_CONSTANT = 1
 
     cell_shift_list = np.array([
         [0, 1, -1, 1, -1, 1, -1, 0, 0, 0, 1, -1, 1, -1, 1, -1, 0, 0, 0, 1, -1, 1, -1, 1, -1, 0, 0],
@@ -30,10 +28,12 @@ class Parameters:
         self.box = box
         self.es_sigma = es_sigma
         self.update_radius = update_radius
-        self.particle_types = particle_types
+
         self.cutoff_radius = cutoff_radius
         self.K_cutoff = K_cutoff
         self.k_vector = self.calc_kvector()
+        
+        self.particle_types = particle_types
 
     def calc_3Dkvector(self):
         k_vectors = []
@@ -97,4 +97,4 @@ class Parameters:
             k_vectors = self.calc_2Dkvector()
         if dim == 1:
             k_vectors = self.calc_1Dkvector()
-        return k_vectors
+        return np.array(k_vectors)

@@ -1,18 +1,21 @@
 import numpy as np
 from numba import jitclass
-from numba import float32, int8, int32, int16, int64
+from numba import float64, float32, int8, int32, int16, int64
 
 specs = [
-    ('particle_positions', float32[:, :]),
+    ('particle_positions', float64[:, :]),
+
     ('box_space', float32[:]),
     ('cutoff', float32),
+
     ('particle_number', int32),
     ('dim', int8),
     ('cell_number', int16[:]),
     ('cell_space', float32[:]),
     ('total_cell_number', int32),
-    ('cell_list', int64[:]),
-    ('particle_neighbour_list', int64[:]),
+
+    ('cell_list', int32[:]),
+    ('particle_neighbour_list', int32[:]),
 ]
 
 
@@ -20,7 +23,7 @@ specs = [
 class Neighbourlist:
     def __init__(self, particles, Box, rc):
 
-        self.particle_positions = particles.astype(np.float32)
+        self.particle_positions = particles.astype(np.float64)
         self.box_space = Box.astype(np.float32)
         self.cutoff = rc
 
@@ -35,16 +38,16 @@ class Neighbourlist:
             self.cell_space[i] = self.box_space[i] / self.cell_number[i]
 
         self.total_cell_number = np.prod(self.cell_number)
-        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int64) - 1
-        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int64) - 1
+        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int32) - 1
+        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int32) - 1
 
         self.construct_neighbourlist()
 
     def construct_neighbourlist(self):
 
         # wipe neighborlists
-        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int64) - 1
-        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int64) - 1
+        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int32) - 1
+        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int32) - 1
         # create interim position array to operate on (so that particle_positions stays untouched)
         shifted_particle_positions = self.particle_positions
 
