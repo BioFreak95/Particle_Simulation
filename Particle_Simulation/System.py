@@ -1,6 +1,6 @@
 import numpy as np
-from Energy import Energy
-from Neighbourlist import Neighbourlist
+from Particle_Simulation.Energy import Energy
+from Particle_Simulation.Neighbourlist import Neighbourlist
 
 
 class System:
