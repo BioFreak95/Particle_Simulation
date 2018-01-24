@@ -1,8 +1,7 @@
 import numpy as np
 import math
 from numba import jitclass
-from numba import float64, float32, int8, int32, int16, int64
-
+from numba import float64, float32, int32
 
 specs = [
     ('particle_positions', float64[:, :]),
@@ -14,13 +13,13 @@ specs = [
     ('box', float64[:]),
     ('cutoff_radius', float32),
     ('es_sigma', float32),
+    ('k_vector', int32[:, :]),
 
     ('charges', float32[:]),
     ('lj_sigmas', float32[:]),
     ('lj_epsilons', float32[:]),
 
     ('VACUUM_PERMITTIVITY', float32),
-
 ]
 
 cell_shift_list = np.array([
@@ -34,9 +33,9 @@ class EnergyCalculator:
 
     # - - - constructor - - - #
 
-    def __init__(self, box, cutoff_radius, es_sigma, charges, lj_sigmas, lj_epsilons):
+    def __init__(self, box, cutoff_radius, es_sigma, charges, lj_sigmas, lj_epsilons, k_vector):
 
-        # variables (change every iteration)
+        # system specific variables (change every iteration)
         self.particle_positions = np.zeros((1, 1), dtype=np.float64)
         self.cell_list = np.zeros(1, dtype=np.int32)
         self.particle_neighbour_list = np.zeros(1, dtype=np.int32)
@@ -45,9 +44,10 @@ class EnergyCalculator:
         self.box = box.astype(np.float64)
         self.cutoff_radius = cutoff_radius
         self.es_sigma = es_sigma
-        self.charges = charges
-        self.lj_sigmas = lj_sigmas
-        self.lj_epsilons = lj_epsilons
+        self.charges = charges.astype(np.float32)
+        self.lj_sigmas = lj_sigmas.astype(np.float32)
+        self.lj_epsilons = lj_epsilons.astype(np.float32)
+        self.k_vector = k_vector
 
         self.cell_neighbour_list = np.zeros((1, 1, 1), dtype=np.int32)
 
@@ -61,7 +61,7 @@ class EnergyCalculator:
         self.cell_list = cell_list
         self.particle_neighbour_list = particle_neighbour_list
 
-    def calculate_shortranged_energy_2(self):
+    def calculate_shortranged_energy_naive(self):
 
         lj_energy = 0
         short_ranged_energy = 0
@@ -76,6 +76,23 @@ class EnergyCalculator:
 
         short_ranged_energy *= 1 / (8 * np.pi * self.VACUUM_PERMITTIVITY)
         return [lj_energy, short_ranged_energy]
+
+    def calculate_longranged_energy(self):
+
+        particle_number = len(self.particle_positions)
+        long_ranged_energy = 1
+
+        for i in range(len(self.k_vector)):
+            s_k = 0
+            k = self.k_vector[i]
+            kn = self._calculate_norm(k)
+
+            for j in range(particle_number):
+                s_k += self.charges[j] * np.cos(self._calculate_dot_product(k, self.particle_positions[j]))
+            long_ranged_energy += (s_k ** 2) * (np.e ** (((self.es_sigma ** 2) * (kn ** 2)) / 2)) / (kn ** 2)
+        long_ranged_energy *= (np.prod(self.box) * self.VACUUM_PERMITTIVITY)
+
+        return long_ranged_energy
 
     def calculate_selfinteraction_energy(self):
 
@@ -106,12 +123,23 @@ class EnergyCalculator:
         charge_1 = self.charges[particle_index_1]
         charge_2 = self.charges[particle_index_2]
 
-        short_ranged_potential = ((charge_1 * charge_2) / (particle_distance)) * math.erfc((particle_distance) / (np.sqrt(2) * self.es_sigma))
+        short_ranged_potential = ((charge_1 * charge_2) / particle_distance) * math.erfc((particle_distance) / (np.sqrt(2) * self.es_sigma))
 
         return short_ranged_potential
 
     def _calculate_selfinteraction_potential(self, particle_index):
         return self.charges[particle_index] ** 2
+
+    def _calculate_dot_product(self, vector_1, vector_2):
+
+        if len(vector_1) != len(vector_2):
+            return 0
+
+        dot_product = 0
+        for i in range(len(vector_1)):
+            dot_product += vector_1[i] * vector_2[i]
+
+        return dot_product
 
     def _wrap_distance(self,distance):
 
@@ -123,11 +151,25 @@ class EnergyCalculator:
 
         return distance
 
-    def _calculate_norm(self, distance):
+    def _determine_box_shift(self, cell_index, cell_neighbour_index):
+
+        box_shift = np.zeros((len(self.box)))
+        if self.cell_neighbour_list[cell_neighbour_index][cell_index][1] != 0:
+            for i in range(len(self.box)):
+                if cell_shift_list[i][cell_neighbour_index] == 1:
+                    box_shift[i] = self.box[i]
+                elif cell_shift_list[i][cell_neighbour_index] == -1:
+                    box_shift[i] = -self.box[i]
+                else:
+                    continue
+
+        return box_shift
+
+    def _calculate_norm(self, vector):
 
         summation = 0
-        for i in range(len(distance)):
-            summation += distance[i] ** 2
+        for i in range(len(vector)):
+            summation += vector[i] ** 2
         distance = np.sqrt(summation)
         return distance
 
@@ -172,7 +214,7 @@ class EnergyCalculator:
                                 box_shift = self._determine_box_shift(i, k)
                                 particle_distance = self._calculate_norm(self.particle_positions[particle_index_1] - (self.particle_positions[particle_index_2] + box_shift))
 
-                                if particle_distance < self.cutoff_radius:
+                                if particle_distance != self.cutoff_radius:
 
                                     lj_energy += self._calculate_lj_potential(particle_index_1, particle_index_2, particle_distance)
                                     short_ranged_energy += self._calculate_shortranged_potential(particle_index_1, particle_index_2, particle_distance)
@@ -182,48 +224,3 @@ class EnergyCalculator:
 
         short_ranged_energy *= 1 / (8 * np.pi * self.VACUUM_PERMITTIVITY)
         return [lj_energy, short_ranged_energy]
-
-    def _determine_box_shift(self, cell_index, cell_neighbour_index):
-
-        box_shift = np.zeros((len(self.box)))
-        if self.cell_neighbour_list[cell_neighbour_index][cell_index][1] != 0:
-            for i in range(len(self.box)):
-                if cell_shift_list[i][cell_neighbour_index] == 1:
-                    box_shift[i] = self.box[i]
-                elif cell_shift_list[i][cell_neighbour_index] == -1:
-                    box_shift[i] = -self.box[i]
-                else:
-                    continue
-
-        return box_shift
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-    def calculate_overall_energy(self, system):
-
-        overall_energy = Energy()
-
-        short_ranged_energy = self.calculate_shortranged_energy(system)
-        overall_energy.lj_energy = short_ranged_energy[0]
-        overall_energy.es_shortranged_energy = short_ranged_energy[1]
-        overall_energy.es_selfinteraction_energy = self.calculate_shortranged_energy(system)
-
-        return overall_energy
-'''

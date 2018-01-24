@@ -1,6 +1,6 @@
 import numpy as np
-from Particle_Simulation.Energy import Energy
-from Particle_Simulation.Neighbourlist import Neighbourlist
+from Energy import Energy
+from Neighbourlist import Neighbourlist
 
 
 class System:
@@ -11,12 +11,18 @@ class System:
         self.energy = Energy()
         self.k_vectors = [1, 1, 1]
 
-        x = []
-        for i in range(len(particles)):
-            x.append(particles[i].position)
-        y = np.array(x)
+        particle_positions = self.get_particle_position_array()
 
-        self.neighbourlist = Neighbourlist(particles=y, Box=parameters.box, rc=parameters.cutoff_radius)
+        self.neighbourlist = Neighbourlist(particles=particle_positions, Box=parameters.box, rc=parameters.cutoff_radius)
 
         if System.cell_neighbour_list is None:
             System.cell_neighbour_list = self.neighbourlist.calc_cell_neighbours()
+
+    def get_particle_position_array(self):
+
+        x = []
+        for i in range(len(self.particles)):
+            x.append(self.particles[i].position)
+        y = np.array(x)
+
+        return y

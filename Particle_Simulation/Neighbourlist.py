@@ -4,13 +4,16 @@ from numba import float64, float32, int8, int32, int16, int64
 
 specs = [
     ('particle_positions', float64[:, :]),
+
     ('box_space', float32[:]),
     ('cutoff', float32),
+
     ('particle_number', int32),
     ('dim', int8),
     ('cell_number', int16[:]),
     ('cell_space', float32[:]),
     ('total_cell_number', int32),
+
     ('cell_list', int32[:]),
     ('particle_neighbour_list', int32[:]),
 ]

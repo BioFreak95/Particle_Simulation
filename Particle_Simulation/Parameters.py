@@ -3,15 +3,21 @@ import numpy as np
 
 class Parameters:
 
-    def __init__(self, temperature, box, es_sigma, update_radius, particle_types, cutoff_radius, K_cutoff):
+    def __init__(self, temperature, box, es_sigma, update_radius, particle_types, cutoff_radius, K_cutoff, charges, lj_sigmas, lj_epsilons):
         self.temperature = temperature
         self.box = box
         self.es_sigma = es_sigma
         self.update_radius = update_radius
-        self.particle_types = particle_types
+
         self.cutoff_radius = cutoff_radius
         self.K_cutoff = K_cutoff
         self.k_vector = self.calc_kvector()
+
+        self.particle_types = particle_types
+
+        self.charges = charges
+        self.lj_sigmas = lj_sigmas
+        self.lj_epsilons = lj_epsilons
 
     def calc_kvector(self):
         k_vectors = []
@@ -30,4 +36,4 @@ class Parameters:
                         else:
                             k_vectors.append(k_vector)
         k_vectors.remove([0, 0, 0])
-        return k_vectors
+        return np.array(k_vectors)

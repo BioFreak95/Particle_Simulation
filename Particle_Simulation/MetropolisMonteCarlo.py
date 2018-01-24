@@ -1,23 +1,28 @@
 import numpy as np
 
+from Particle import Particle
+from System import System
 
 class MetropolisMonteCarlo:
-    BOLTZMANN_CONSTANT = 1
+    BOLTZMANN_CONSTANT = 1.38064852 * 10 ** (-23)
 
     @staticmethod
     def generate_trial_configuration(system, parameters):
 
         n_particles = len(system.particles)
-        update_probability = np.random.rand(1)[0]
+        update_probability = 1 # np.random.rand(1)[0]
+        trial_particles = []
+
+        for i in range (n_particles):
+            trial_particles.append(Particle(system.particles[i].type_index, np.zeros(len(system.particles[0].position))))
 
         for i in range(0, n_particles):
             random_number = np.random.rand(1)[0]
             if random_number <= update_probability:
-                system.particles[i].position = MetropolisMonteCarlo._generate_trial_position(
-                    system.particles[i].position,
-                    parameters)
 
-        return system
+                trial_particles[i].position = MetropolisMonteCarlo._generate_trial_position(system.particles[i].position, parameters)
+
+        return System(trial_particles, parameters)
 
     @staticmethod
     def evaluate_trial_configuration_greedy(system, trial_system):
