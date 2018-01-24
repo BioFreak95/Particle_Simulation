@@ -6,6 +6,8 @@ from Particle_Simulation.Neighbourlist import Neighbourlist
 class System:
     cell_neighbour_list = None
 
+    # Test Positions are same dimension
+
     def __init__(self, particles, parameters):
         self.particles = particles
         self.energy = Energy()
