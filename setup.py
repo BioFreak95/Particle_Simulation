@@ -23,6 +23,6 @@ setup(
     long_description=open('README.md').read(),
     packages=['Particle_Simulation', 'Particle_Simulation.test'],
     setup_requires=['pytest-runner',],
-    install_requires=['numpy'],
+    install_requires=['numpy', 'numba'],
     tests_require=['pytest'],
 zip_safe=False)
