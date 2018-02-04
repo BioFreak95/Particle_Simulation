@@ -8,7 +8,7 @@ class Parameters:
         [0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1]])
 
-    def __init__(self, temperature, box, es_sigma, update_radius, particle_types, cutoff_radius, K_cutoff):
+    def __init__(self, temperature, box, es_sigma, update_radius, update_probability, cutoff_radius, K_cutoff, charges, lj_sigmas, lj_epsilons):
         if temperature < 0:
             raise ValueError('Temperature cant be negative.')
         for i in box:
@@ -22,18 +22,20 @@ class Parameters:
             raise ValueError('cutoff can not be negative.')
         if K_cutoff < 0:
             raise ValueError('K-cutoff can not be negative.')
-        if not isinstance(particle_types, np.ndarray):
-            raise TypeError('particle_type must be an array')
+
         self.temperature = temperature
         self.box = box
         self.es_sigma = es_sigma
         self.update_radius = update_radius
+        self.update_probability = update_probability
 
         self.cutoff_radius = cutoff_radius
         self.K_cutoff = K_cutoff
         self.k_vector = self.calc_kvector()
-        
-        self.particle_types = particle_types
+
+        self.charges = charges
+        self.lj_sigmas = lj_sigmas
+        self.lj_epsilons = lj_epsilons
 
     def calc_3Dkvector(self):
         k_vectors = []

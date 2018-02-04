@@ -52,7 +52,7 @@ class EnergyCalculator:
         self.cell_neighbour_list = np.zeros((1, 1, 1), dtype=np.int32)
 
         # constants (same every simulation)
-        self.VACUUM_PERMITTIVITY = 1
+        self.VACUUM_PERMITTIVITY =  8.854187817 * 10 ** (-12)
 
     # - - - public methods - - - #
 
@@ -209,7 +209,7 @@ class EnergyCalculator:
                                     short_ranged_energy += self._calculate_shortranged_potential(particle_index_1, particle_index_2, particle_distance)
 
                         elif self.cell_neighbour_list[k][i][1] != 0:
-                            if particle_index_1 < particle_index_2:
+                            if particle_index_1 != particle_index_2:
 
                                 box_shift = self._determine_box_shift(i, k)
                                 particle_distance = self._calculate_norm(self.particle_positions[particle_index_1] - (self.particle_positions[particle_index_2] + box_shift))

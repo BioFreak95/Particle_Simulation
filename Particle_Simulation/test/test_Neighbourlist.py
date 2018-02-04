@@ -122,7 +122,7 @@ class test_System(unittest.TestCase):
         reference_neighlist = np.asarray([-1.0, 0.0, 1.0, -1.0, 3.0, 4.0, 5.0, -1.0, 7.0, 8.0, 2.0])
         box_space = np.array([10])
         cutoff = 3
-        s1 = Neighbourlist(particle_positions, box_space, cutoff)
+        s1 = Neighbourlist(particles=particle_positions, Box=box_space, rc=cutoff)
         npt.assert_equal(reference_head, s1.cell_list, 'Failed', verbose=True)
         npt.assert_equal(reference_neighlist, s1.particle_neighbour_list, 'Failed', verbose=True)
 
