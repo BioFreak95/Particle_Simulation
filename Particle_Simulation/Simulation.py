@@ -1,7 +1,7 @@
-from System import System
-from Energy import Energy
-from EnergyCalculator import EnergyCalculator
-from MetropolisMonteCarlo import MetropolisMonteCarlo
+from Particle_Simulation.System import System
+from Particle_Simulation.Energy import Energy
+from Particle_Simulation.EnergyCalculator import EnergyCalculator
+from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
 
 
 class Simulation:
