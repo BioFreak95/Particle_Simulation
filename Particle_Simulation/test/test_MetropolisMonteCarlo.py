@@ -1,22 +1,26 @@
-from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
-from Particle_Simulation.Parameters import Parameters
-from Particle_Simulation.ParticleType import ParticleType
-from Particle_Simulation.Particle import Particle
-from Particle_Simulation.System import System
 import numpy as np
 import numpy.testing as npt
 import unittest
+
+from Particle_Simulation.Particle import Particle
+from Particle_Simulation.Parameters import Parameters
+from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
 
 
 class TestMetropolisMonteCarlo(unittest.TestCase):
     # check_same_position_input_behavior
     def test__generate_trial_position_redundancy(self):
-        particle_type = ParticleType(name="Natrium", mass=2, charge=2, lj_epsilon=1.25, lj_sigma=0.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5, K_cutoff=1)
-        particle_1 = Particle(position=np.array([1, 2, 3]), type_index=0)
-        particle_2 = Particle(position=np.array([1, 2, 3]), type_index=0)
+
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, cutoff_radius=0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons, update_probability=0.5)
+
+        particle_1 = Particle(position=np.array([1, 2, 3]))
+        particle_2 = Particle(position=np.array([1, 2, 3]))
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
         trial_position2 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
         x = 0
@@ -27,61 +31,77 @@ class TestMetropolisMonteCarlo(unittest.TestCase):
         npt.assert_equal(x, 2, 'Failed', verbose=True)
 
     # box and particle dimension mismatch
-    @unittest.expectedFailure
+    #@unittest.expectedFailure
     def test__generate_trial_position_2(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 3]), type_index=0)
+
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, cutoff_radius=0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons, update_probability=0.5)
+
+        particle_1 = Particle(position=np.array([1, 2]))
 
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
 
-    # type_index_negative
+    # negative_temperature
     @unittest.expectedFailure
-    def test__generate_trial_position_3(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-
-    # negative_temprature
     def test__generate_trial_position_4(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=-1, box=np.array([12., 13., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5, K_cutoff=1)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
+
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=-1, box=np.array([12., 13., 14.]), es_sigma=0.5, cutoff_radius=0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons, update_probability=0.5)
+
+        particle_1 = Particle(position=np.array([1, 2, 4]))
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
 
-    # negaive_vlaue_sigma
+    # negative_value_sigma
     @unittest.expectedFailure
     def test__generate_trial_position_5(self):
-        particle_type = ParticleType(name="test_element", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=-2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=120, box=np.array([12., 13., 13.]), es_sigma=-0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
+
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=-1, box=np.array([12., 13., 14.]), es_sigma=-0.5, cutoff_radius=0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons, update_probability=0.5)
+
+        particle_1 = Particle(position=np.array([1, 2, 4]))
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
 
     # negaive_value_cutoff
     @unittest.expectedFailure
     def test__generate_trial_position_6(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=120, box=np.array([12., 13., 13.]), es_sigma=-0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=-0.5)
-        particle_1 = Particle(position=np.array([1, 2, 4]), type_index=1)
+
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, cutoff_radius=-0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons, update_probability=0.5)
+
+        particle_1 = Particle(position=np.array([1, 2, 4]))
         trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
 
     def test_shift_position(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
 
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=3, K_cutoff=1)
+        # setting up test parameters
+        charges = np.ones(1000).astype(np.float32)
+        lj_sigmas = np.ones(1000).astype(np.float32)
+        lj_epsilons = np.ones(1000).astype(np.float32)
+        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, cutoff_radius=0.5,
+                                update_radius=1, K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas,
+                                lj_epsilons=lj_epsilons,
+                                update_probability=0.5)
+
         reference_pos1 = np.array([1.5, 1.0, 1.5])
         reference_pos2 = np.array([10.5, 12.0, 5.5])
         particle_position_1 = np.array([13.5, 14., 15.5])
