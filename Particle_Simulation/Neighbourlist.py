@@ -14,8 +14,8 @@ specs = [
     ('cell_space', float32[:]),
     ('total_cell_number', int32),
 
-    ('cell_list', int32[:]),
-    ('particle_neighbour_list', int32[:]),
+    ('cell_list', int64[:]),
+    ('particle_neighbour_list', int64[:]),
 ]
 
 
@@ -38,8 +38,8 @@ class Neighbourlist:
             self.cell_space[i] = self.box_space[i] / self.cell_number[i]
 
         self.total_cell_number = np.prod(self.cell_number)
-        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int32) - 1
-        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int32) - 1
+        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int64) - 1
+        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int64) - 1
 
         self.construct_neighbourlist()
 
