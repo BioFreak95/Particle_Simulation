@@ -32,7 +32,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
 
-        np.array_equal(actual, system)
+        npt.assert_equal(actual, system)
 
     def test_evaluate_trial_configuration_greedy_2(self):
 
@@ -56,7 +56,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
 
-        np.array_equal(actual, trial_system)
+        npt.assert_equal(actual, trial_system)
 
     def test_evaluate_trial_configuration_greedy_3(self):
 
@@ -80,7 +80,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
 
-        np.array_equal(actual, trial_system)
+        npt.assert_equal(actual, trial_system)
         
     def test_evaluate_trial_configuration_1(self):
 
@@ -104,7 +104,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         actual = MetropolisMonteCarlo.evaluate_trial_configuration(system,trial_system, para)
 
-        np.array_equal(actual, trial_system)
+        npt.assert_equal(actual, trial_system)
 
     def test_shift_position_1(self):
 
@@ -121,7 +121,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         actual = MetropolisMonteCarlo._shift_position(position, para)
 
-        np.array_equal(actual, position)
+        npt.assert_array_equal(actual, position)
 
     def test_shift_position_2(self):
 
@@ -139,7 +139,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.5, 0.5, 0.5])
 
-        np.array_equal(actual, reference)
+        npt.assert_array_equal(actual, reference)
 
     def test_shift_position_3(self):
 
@@ -157,7 +157,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.5, 0.5, 0.5])
 
-        np.array_equal(actual, reference)
+        npt.assert_array_equal(actual, reference)
 
     def test_shift_position_4(self):
 
@@ -175,7 +175,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.7, 0.4, 0.6])
 
-        np.array_equal(actual, reference)
+        npt.assert_array_almost_equal(actual, reference)
 
     # test if the specified update radius is actually satisfied
     def test_generate_trial_position_1(self):
