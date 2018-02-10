@@ -218,3 +218,4 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         distances = np.array(distances)
         npt.assert_approx_equal(distances.sum()/10000, 0.5, significant=2)
+
