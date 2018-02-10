@@ -1,66 +1,221 @@
-from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
-from Particle_Simulation.Parameters import Parameters
-from Particle_Simulation.ParticleType import ParticleType
-from Particle_Simulation.Particle import Particle
-from Particle_Simulation.System import System
 import numpy as np
 import numpy.testing as npt
 import unittest
 
+from Particle_Simulation.Particle import Particle
+from Particle_Simulation.System import System
+from Particle_Simulation.Parameters import Parameters
+from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
 
-class TestMetropolisMonteCarlo(unittest.TestCase):
-    # check_same_position_input_behavior
-    def test__generate_trial_position_redundancy(self):
-        particle_type = ParticleType(name="Natrium", mass=2, charge=2, lj_epsilon=1.25, lj_sigma=0.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5, K_cutoff=1)
-        particle_1 = Particle(position=np.array([1, 2, 3]), type_index=0)
-        particle_2 = Particle(position=np.array([1, 2, 3]), type_index=0)
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-        trial_position2 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-        x = 0
-        if np.array_equal(trial_position1, trial_position2):
-            x = 1
-        else:
-            x = 2
-        npt.assert_equal(x, 2, 'Failed', verbose=True)
 
-    # box and particle dimension mismatch
-    @unittest.expectedFailure
-    def test__generate_trial_position_2(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
-        parameters = Parameters(temperature=0, box=np.array([12., 13.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=0.5)
-        particle_1 = Particle(position=np.array([1, 2, 3]), type_index=0)
+class test_MetropolisMonteCarlo(unittest.TestCase):
 
-        trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
+    def test_evaluate_trial_configuration_greedy_1(self):
 
-    def test_shift_position(self):
-        particle_type = ParticleType(name="Hydrogen", mass=1.008, charge=1.602, lj_epsilon=0.21, lj_sigma=2.5)
-        particle_type = np.array([particle_type])
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
 
-        parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, update_radius=1,
-                                particle_types=particle_type, cutoff_radius=3, K_cutoff=1)
-        reference_pos1 = np.array([1.5, 1.0, 1.5])
-        reference_pos2 = np.array([10.5, 12.0, 5.5])
-        particle_position_1 = np.array([13.5, 14., 15.5])
-        shifted_position_1 = MetropolisMonteCarlo._shift_position(particle_position_1, parameters)
-        particle_position_2 = np.array([-1.5, -1., 5.5])
-        shifted_position_2 = MetropolisMonteCarlo._shift_position(particle_position_2, parameters)
-        npt.assert_equal(reference_pos1, shifted_position_1, 'Failed', verbose=True)
-        npt.assert_equal(reference_pos2, shifted_position_2, 'Failed', verbose=True)
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
 
-        # to check behavior of trail_positions
+        particle1 = Particle(np.array([0.5, 0.5, 0.5]))
+        particle2 = Particle(np.array([0.5, 0.5, 0.1]))
+        particles = [particle1, particle2]
 
-# def test_generate_trial_position_behavior(self):
-#         particle_type = ParticleType(name="Natrium", mass=2, charge=2, lj_epsilon=1.25, lj_sigma=0.5)
-#         particle_type = np.array([particle_type])
-#         parameters = Parameters(temperature=0, box=np.array([12., 13., 14.]), es_sigma=0.5, update_radius=1,
-#                                 particle_types=particle_type, cutoff_radius=0.5)
-#         particle_1 = Particle(position=np.array([0 ,0, 0]), type_index=0)
-#         trial_position1 = np.zeros(3)
-#         for i in range(100):
-#             trial_position1 = np.array(MetropolisMonteCarlo._generate_trial_position(particle_1.position, parameters))
-#             print(trial_position1)
+        system = System(particles=particles, parameters=para)
+        system.energy.overall_energy = 1
+        trial_system = System(particles=particles, parameters=para)
+        trial_system.energy.overall_energy = 1.1
+
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+
+        npt.assert_equal(actual, system)
+
+    def test_evaluate_trial_configuration_greedy_2(self):
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        particle1 = Particle(np.array([0.5, 0.5, 0.5]))
+        particle2 = Particle(np.array([0.5, 0.5, 0.1]))
+        particles = [particle1, particle2]
+
+        system = System(particles=particles, parameters=para)
+        system.energy.overall_energy = 1.1
+        trial_system = System(particles=particles, parameters=para)
+        trial_system.energy.overall_energy = 1.1
+
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+
+        npt.assert_equal(actual, trial_system)
+
+    def test_evaluate_trial_configuration_greedy_3(self):
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        particle1 = Particle(np.array([0.5, 0.5, 0.5]))
+        particle2 = Particle(np.array([0.5, 0.5, 0.1]))
+        particles = [particle1, particle2]
+
+        system = System(particles=particles, parameters=para)
+        system.energy.overall_energy = 1.1
+        trial_system = System(particles=particles, parameters=para)
+        trial_system.energy.overall_energy = 1
+
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+
+        npt.assert_equal(actual, trial_system)
+        
+    def test_evaluate_trial_configuration_1(self):
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        particle1 = Particle(np.array([0.5, 0.5, 0.5]))
+        particle2 = Particle(np.array([0.5, 0.5, 0.1]))
+        particles = [particle1, particle2]
+
+        system = System(particles=particles, parameters=para)
+        system.energy.overall_energy = 1
+        trial_system = System(particles=particles, parameters=para)
+        trial_system.energy.overall_energy = 1
+
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration(system,trial_system, para)
+
+        npt.assert_equal(actual, trial_system)
+
+    def test_shift_position_1(self):
+
+        position = np.array([0.5, 0.5, 0.5])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        actual = MetropolisMonteCarlo._shift_position(position, para)
+
+        npt.assert_array_equal(actual, position)
+
+    def test_shift_position_2(self):
+
+        position = np.array([1.5, 1.5, 1.5])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        actual = MetropolisMonteCarlo._shift_position(position, para)
+        reference = np.array([0.5, 0.5, 0.5])
+
+        npt.assert_array_equal(actual, reference)
+
+    def test_shift_position_3(self):
+
+        position = np.array([-0.5, -0.5, -0.5])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        actual = MetropolisMonteCarlo._shift_position(position, para)
+        reference = np.array([0.5, 0.5, 0.5])
+
+        npt.assert_array_equal(actual, reference)
+
+    def test_shift_position_4(self):
+
+        position = np.array([-1.3, 2.4, -3.4])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        actual = MetropolisMonteCarlo._shift_position(position, para)
+        reference = np.array([0.7, 0.4, 0.6])
+
+        npt.assert_array_almost_equal(actual, reference)
+
+    # test if the specified update radius is actually satisfied
+    def test_generate_trial_position_1(self):
+
+        position = np.array([0.5, 0.5, 0.5])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1,1,1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        for i in range(1000):
+            trial_position = MetropolisMonteCarlo._generate_trial_position(position, para)
+            distance = np.linalg.norm(position - trial_position)
+            if distance > para.update_radius:
+                raise AssertionError("Distance greater than update radius")
+
+    # test if trial positions are uniformly distributed
+    def test_generate_trial_position_2(self):
+
+        position = np.array([0.5, 0.5, 0.5])
+
+        # set test parameters
+        charges = np.ones(10).astype(np.float32)
+        lj_sigmas = np.ones(10).astype(np.float32)
+        lj_epsilons = np.ones(10).astype(np.float32)
+
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, cutoff_radius=1, update_radius=1,
+                          K_cutoff=1, charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
+                          update_probability=0.5)
+
+        distances = []
+        for i in range(10000):
+            trial_position = MetropolisMonteCarlo._generate_trial_position(position, para)
+            distances.append(np.linalg.norm(position - trial_position))
+
+        distances = np.array(distances)
+        npt.assert_approx_equal(distances.sum()/10000, 0.5, significant=2)
+
