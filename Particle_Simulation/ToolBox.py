@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+from Particle_Simulation.Particle import Particle
 
 class ToolBox:
 
@@ -76,3 +78,31 @@ class ToolBox:
         ax = plt.axes(projection='3d')
         Axes3D.scatter(ax, x, y, z)
         plt.show()
+        
+    def get_inputs(file_path):
+        #Load arrays from .npz file
+        with np.load(file_path) as fh :
+            parameters = fh['parameters']
+            types = fh['types']
+            particle_positions = fh['positions']
+            box = fh['box']
+            #scalar (nd-array parameters.npy to dictionary)
+            prmtr_dict = parameters.item()
+            name =[]
+            prmtr_vals =[]
+            for k, v in prmtr_dict.items():
+                name.append(k)
+                prmtr_vals.append(v)
+            name = np.array(name)
+            prmtr_vals = np.array(prmtr_vals)
+            lj_sigmas = prmtr_vals[ : , 0]
+            lj_epsilons = prmtr_vals[ : , 1]
+            mass = prmtr_vals[ : , 2]
+            charges = prmtr_vals[ : , 3]
+            #Particle object:
+            particle_list = []
+            for i in range(len(particle_positions)):
+                particle_obj = Particle(position=particle_positions[i])
+                particle_list.append(particle_obj)
+            particle = np.array(particle_list)
+            return particle, particle_positions, box, lj_sigmas, lj_epsilons, charges, name, mass
