@@ -1,12 +1,12 @@
 import numpy as np
 import math
 from numba import jitclass
-from numba import float64, float32, int32
+from numba import float64, float32, int32, int64
 
 specs = [
     ('particle_positions', float64[:, :]),
-    ('cell_list', int32[:]),
-    ('particle_neighbour_list', int32[:]),
+    ('cell_list', int64[:]),
+    ('particle_neighbour_list', int64[:]),
 
     ('cell_neighbour_list', int32[:, :, :]),
 
@@ -37,8 +37,8 @@ class EnergyCalculator:
 
         # system specific variables (change every iteration)
         self.particle_positions = np.zeros((1, 1), dtype=np.float64)
-        self.cell_list = np.zeros(1, dtype=np.int32)
-        self.particle_neighbour_list = np.zeros(1, dtype=np.int32)
+        self.cell_list = np.zeros(1, dtype=np.int64)
+        self.particle_neighbour_list = np.zeros(1, dtype=np.int64)
 
         # simulation specific constants (defined once when instantiating this class)
         self.box = box.astype(np.float64)
@@ -88,9 +88,11 @@ class EnergyCalculator:
             kn = self._calculate_norm(k)
 
             for j in range(particle_number):
-                s_k += self.charges[j] * np.cos(self._calculate_dot_product(k, self.particle_positions[j]))
+                sin_contribution = self.charges[j] * np.sin(self._calculate_dot_product(k, self.particle_positions[j]))
+                cos_contribution = self.charges[j] * np.cos(self._calculate_dot_product(k, self.particle_positions[j]))
+                s_k += sin_contribution ** 2 + cos_contribution ** 2
             long_ranged_energy += (s_k ** 2) * (np.e ** (((self.es_sigma ** 2) * (kn ** 2)) / 2)) / (kn ** 2)
-        long_ranged_energy *= (np.prod(self.box) * self.VACUUM_PERMITTIVITY)
+        long_ranged_energy *= 1 / ((np.prod(self.box) * self.VACUUM_PERMITTIVITY))
 
         return long_ranged_energy
 

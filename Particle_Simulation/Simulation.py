@@ -62,7 +62,7 @@ class Simulation:
         self.parameters.update_radius = update_radius/10
 
         # fine optimization
-        for i in range(round(n_steps/10)):
+        for i in range(100):
             # generate trial system
             trial_system = MetropolisMonteCarlo.generate_trial_configuration(self.opt_systems[-1], self.parameters)
 
