@@ -19,7 +19,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         particle1 = Particle(np.array([0.5, 0.5, 0.5]))
         particle2 = Particle(np.array([0.5, 0.5, 0.1]))
@@ -43,7 +43,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         particle1 = Particle(np.array([0.5, 0.5, 0.5]))
         particle2 = Particle(np.array([0.5, 0.5, 0.1]))
@@ -67,7 +67,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         particle1 = Particle(np.array([0.5, 0.5, 0.5]))
         particle2 = Particle(np.array([0.5, 0.5, 0.1]))
@@ -91,7 +91,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         particle1 = Particle(np.array([0.5, 0.5, 0.5]))
         particle2 = Particle(np.array([0.5, 0.5, 0.1]))
@@ -117,7 +117,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         actual = MetropolisMonteCarlo._shift_position(position, para)
 
@@ -134,7 +134,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.5, 0.5, 0.5])
@@ -152,7 +152,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.5, 0.5, 0.5])
@@ -170,7 +170,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         actual = MetropolisMonteCarlo._shift_position(position, para)
         reference = np.array([0.7, 0.4, 0.6])
@@ -189,7 +189,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         for i in range(1000):
             trial_position = MetropolisMonteCarlo._generate_trial_position(position, para)
@@ -209,7 +209,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
 
         para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
-                          update_probability=0.5, accurency=1)
+                          update_probability=0.5, accuracy=1)
 
         distances = []
         for i in range(10000):

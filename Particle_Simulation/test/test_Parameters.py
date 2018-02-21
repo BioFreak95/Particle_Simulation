@@ -14,7 +14,7 @@ class test_Parameters(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
         parameters = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=2, update_radius=0.5,
-                                accurency=2, charges=charges, lj_sigmas=lj_sigmas,
+                                accuracy=0.5, charges=charges, lj_sigmas=lj_sigmas,
                                 lj_epsilons=lj_epsilons, update_probability=0.5)
 
         reference = [[-2, 0, 0], [-1, -1, -1], [-1, -1, 0], [-1, -1, 1], [-1, 0, -1], [-1, 0, 0], [-1, 0, 1],
@@ -29,7 +29,7 @@ class test_Parameters(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
         parameters = Parameters(temperature=1, box=np.array([1, 1]), es_sigma=2, update_radius=0.5,
-                                accurency=2, charges=charges, lj_sigmas=lj_sigmas,
+                                accuracy=0.5, charges=charges, lj_sigmas=lj_sigmas,
                                 lj_epsilons=lj_epsilons, update_probability=0.5)
 
         reference = [[-2, 0], [-1, -1], [-1, 0], [-1, 1], [0, -2], [0, -1]]
@@ -42,7 +42,7 @@ class test_Parameters(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
         parameters = Parameters(temperature=1, box=np.array([1]), es_sigma=2, update_radius=0.5,
-                                accurency=2, charges=charges, lj_sigmas=lj_sigmas,
+                                accuracy=0.5, charges=charges, lj_sigmas=lj_sigmas,
                                 lj_epsilons=lj_epsilons, update_probability=0.5)
 
         reference = [[-2], [-1]]
