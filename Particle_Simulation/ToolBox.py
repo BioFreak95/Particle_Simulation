@@ -82,19 +82,19 @@ class ToolBox:
     def get_inputs(file_path):
         #Load arrays from .npz file
         with np.load(file_path) as fh :
-            parameters = fh['parameters']
-            types = fh['types']
-            particle_positions = fh['positions']
             box = fh['box']
-            #scalar (nd-array parameters.npy to dictionary)
-            prmtr_dict = parameters.item()
-            name =[]
-            prmtr_vals =[]
-            for k, v in prmtr_dict.items():
-                name.append(k)
-                prmtr_vals.append(v)
-            name = np.array(name)
-            prmtr_vals = np.array(prmtr_vals)
+            particle_positions = fh['positions']
+            types = fh['types']
+            readme = fh['readme']
+            #scalarization (parameters.npy to dictionary)
+            parameters = fh['parameters'].item()
+            #fetch values from dictionary and create input ndarrays
+            prmtr_vals = []
+            for i in range(len(types)):
+                prmtr_vals.append(parameters.get(types[i]))
+            prmtr_vals = np.asarray(prmtr_vals)
+            
+            name = types
             lj_sigmas = prmtr_vals[ : , 0]
             lj_epsilons = prmtr_vals[ : , 1]
             mass = prmtr_vals[ : , 2]
@@ -105,4 +105,5 @@ class ToolBox:
                 particle_obj = Particle(position=particle_positions[i])
                 particle_list.append(particle_obj)
             particle = np.array(particle_list)
-            return particle, particle_positions, box, lj_sigmas, lj_epsilons, charges, name, mass
+            
+            return particle, box, particle_positions, types, name, lj_sigmas, lj_epsilons, mass, charges, readme
