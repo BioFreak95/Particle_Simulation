@@ -46,8 +46,8 @@ class Neighbourlist:
     def construct_neighbourlist(self):
 
         # wipe neighborlists
-        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int32) - 1
-        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int32) - 1
+        self.cell_list = np.zeros(self.total_cell_number, dtype=np.int64) - 1
+        self.particle_neighbour_list = np.zeros(self.particle_number, dtype=np.int64) - 1
         # create interim position array to operate on (so that particle_positions stays untouched)
         shifted_particle_positions = self.particle_positions
 
