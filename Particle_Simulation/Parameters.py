@@ -37,9 +37,9 @@ class Parameters:
 
     def calc_3Dkvector(self):
         k_vectors = []
-        for i in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
-            for j in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
-                for l in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+        for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+            for j in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+                for l in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
                     k_vector = [i, j, l]
                     if np.linalg.norm(k_vector) <= self.K_cutoff:
                         vec = []
@@ -56,8 +56,8 @@ class Parameters:
 
     def calc_2Dkvector(self):
         k_vectors = []
-        for i in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
-            for j in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+        for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+            for j in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
                 k_vector = [i, j]
                 if np.linalg.norm(k_vector) <= self.K_cutoff:
                     vec = []
@@ -74,7 +74,7 @@ class Parameters:
 
     def calc_1Dkvector(self):
         k_vectors = []
-        for i in range(int(np.ceil(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
+        for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
             k_vector = [i]
             if np.linalg.norm(k_vector) <= self.K_cutoff:
                 vec = []

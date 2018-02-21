@@ -1,5 +1,6 @@
 import numpy as np
 import unittest
+import numpy.testing as npt
 
 from Particle_Simulation.Parameters import Parameters
 
@@ -19,7 +20,7 @@ class test_Parameters(unittest.TestCase):
         reference = [[-2, 0, 0], [-1, -1, -1], [-1, -1, 0], [-1, -1, 1], [-1, 0, -1], [-1, 0, 0], [-1, 0, 1],
                      [-1, 1, -1], [-1, 1, 0], [-1, 1, 1], [0, -2, 0], [0, -1, -1], [0, -1, 0], [0, -1, 1], [0, 0, -2],
                      [0, 0, -1]]
-        np.array_equal(parameters.k_vector, reference)
+        npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_2Dkvector(self):
 
@@ -32,7 +33,7 @@ class test_Parameters(unittest.TestCase):
                                 lj_epsilons=lj_epsilons, update_probability=0.5)
 
         reference = [[-2, 0], [-1, -1], [-1, 0], [-1, 1], [0, -2], [0, -1]]
-        np.array_equal(parameters.k_vector, reference)
+        npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_1Dkvector(self):
 
@@ -45,7 +46,7 @@ class test_Parameters(unittest.TestCase):
                                 lj_epsilons=lj_epsilons, update_probability=0.5)
 
         reference = [[-2], [-1]]
-        np.array_equal(parameters.k_vector, reference)
+        npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_negative_temperature(self):
 
