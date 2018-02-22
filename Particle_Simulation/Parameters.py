@@ -2,7 +2,6 @@ import numpy as np
 
 
 class Parameters:
-
     cell_shift_list = np.array([
         [0, 1, -1, 1, -1, 1, -1, 0, 0, 0, 1, -1, 1, -1, 1, -1, 0, 0, 0, 1, -1, 1, -1, 1, -1, 0, 0],
         [0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1],
@@ -117,7 +116,7 @@ class Parameters:
         return cutoff
 
     def _calculate_update_radius(self):
-        update_radius = np.sum(self.box)/(len(self.box) * 20)
+        update_radius = np.sum(self.box) / (len(self.box) * 75)
         return update_radius
 
     def calc_es_sigma(self):

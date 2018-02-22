@@ -14,7 +14,8 @@ class System:
 
         particle_positions = self.get_particle_position_array()
 
-        self.neighbourlist = Neighbourlist(particles=particle_positions, Box=parameters.box, rc=parameters.cutoff_radius)
+        self.neighbourlist = Neighbourlist(particles=particle_positions, Box=parameters.box,
+                                           rc=parameters.cutoff_radius)
 
         if System.cell_neighbour_list is None:
             System.cell_neighbour_list = self.neighbourlist.calc_cell_neighbours()

@@ -5,7 +5,6 @@ from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
 
 
 class Simulation:
-
     # - - - constructor - - - #
 
     def __init__(self, system, parameters):
@@ -40,7 +39,7 @@ class Simulation:
         # append to optimize trajectory
         self.opt_systems.append(current_system)
 
-        # crude optimization
+        # optimization
         for i in range(n_steps):
             # generate trial system
             trial_system = MetropolisMonteCarlo.generate_trial_configuration(self.opt_systems[-1], self.parameters)
@@ -56,30 +55,6 @@ class Simulation:
             # evaluate system and trial system and append the accepted system to the trajectory
             self.opt_systems.append(
                 MetropolisMonteCarlo.evaluate_trial_configuration_greedy(self.opt_systems[-1], trial_system))
-
-        # interim update_radius
-        update_radius = self.parameters.update_radius
-        self.parameters.update_radius = update_radius/10
-
-        # fine optimization
-        for i in range(100):
-            # generate trial system
-            trial_system = MetropolisMonteCarlo.generate_trial_configuration(self.opt_systems[-1], self.parameters)
-
-            # update particle positions and neighbourlist
-            self.energy_calculator.set_system(trial_system.neighbourlist.particle_positions,
-                                              trial_system.neighbourlist.cell_list,
-                                              trial_system.neighbourlist.particle_neighbour_list)
-
-            # calculate energy of trial system
-            trial_system.energy = self._calculate_overall_energy()
-
-            # evaluate system and trial system and append the accepted system to the trajectory
-            self.opt_systems.append(
-                MetropolisMonteCarlo.evaluate_trial_configuration_greedy(self.opt_systems[-1], trial_system))
-
-        # resetting update_radius to desired value
-        self.parameters.update_radius = update_radius
 
     def simulate(self, n_steps):
 
@@ -95,7 +70,6 @@ class Simulation:
         self.sim_systems.append(current_system)
 
         for i in range(n_steps):
-
             # generate trial system
             trial_system = MetropolisMonteCarlo.generate_trial_configuration(self.sim_systems[-1], self.parameters)
 
@@ -108,9 +82,10 @@ class Simulation:
             trial_system.energy = self._calculate_overall_energy()
 
             # evaluate system and trial system and append the accepted system to the trajectory
-            self.sim_systems.append(MetropolisMonteCarlo.evaluate_trial_configuration(self.sim_systems[-1], trial_system, self.parameters))
+            self.sim_systems.append(
+                MetropolisMonteCarlo.evaluate_trial_configuration(self.sim_systems[-1], trial_system, self.parameters))
 
-    # - - - private methods - - - #
+            # - - - private methods - - - #
 
     def _calculate_overall_energy(self):
 
@@ -124,3 +99,38 @@ class Simulation:
         energy.calculate_overall_energy()
 
         return energy
+
+    def optimize_annealing(self, n_steps):
+
+        # set up initial system
+        current_system = System(self.system.particles, self.parameters)
+        # pass particle positions and neighbourlist to the energy calculator class
+        self.energy_calculator.set_system(current_system.neighbourlist.particle_positions,
+                                          current_system.neighbourlist.cell_list,
+                                          current_system.neighbourlist.particle_neighbour_list)
+        # calculate energy of initial system
+        current_system.energy = self._calculate_overall_energy()
+        # append to optimize trajectory
+        self.opt_systems.append(current_system)
+
+        temperature = self.parameters.temperature
+
+        # optimization
+        for i in range(n_steps):
+            # generate trial system
+            trial_system = MetropolisMonteCarlo.generate_trial_configuration(self.opt_systems[-1], self.parameters)
+
+            # update particle positions and neighbourlist
+            self.energy_calculator.set_system(trial_system.neighbourlist.particle_positions,
+                                              trial_system.neighbourlist.cell_list,
+                                              trial_system.neighbourlist.particle_neighbour_list)
+
+            # calculate energy of trial system
+            trial_system.energy = self._calculate_overall_energy()
+
+            # evaluate system and trial system and append the accepted system to the trajectory
+            self.opt_systems.append(
+                MetropolisMonteCarlo.evaluate_trial_configuration(self.opt_systems[-1], trial_system, self.parameters))
+            self.parameters.temperature = self.parameters.temperature - (temperature / (n_steps + 1))
+
+        self.parameters.temperature = temperature

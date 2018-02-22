@@ -6,9 +6,7 @@ from Particle_Simulation.Parameters import Parameters
 
 
 class test_Parameters(unittest.TestCase):
-
     def test_3Dkvector(self):
-
         # setting up test parameters
         charges = np.ones(10).astype(np.float32)
         lj_sigmas = np.ones(10).astype(np.float32)
@@ -23,7 +21,6 @@ class test_Parameters(unittest.TestCase):
         npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_2Dkvector(self):
-
         # setting up test parameters
         charges = np.ones(10).astype(np.float32)
         lj_sigmas = np.ones(10).astype(np.float32)
@@ -36,7 +33,6 @@ class test_Parameters(unittest.TestCase):
         npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_1Dkvector(self):
-
         # setting up test parameters
         charges = np.ones(10).astype(np.float32)
         lj_sigmas = np.ones(10).astype(np.float32)
@@ -49,20 +45,16 @@ class test_Parameters(unittest.TestCase):
         npt.assert_array_equal(parameters.k_vector, reference)
 
     def test_negative_temperature(self):
-
         # setting up mock object
         mock = np.ones(10).astype(np.float32)
         self.assertRaises(ValueError, Parameters, -2, [1, 2, 3], 2, np.array([0]), mock, mock, mock)
 
     def test_negative_box(self):
-
         # setting up mock object
         mock = np.ones(10).astype(np.float32)
         self.assertRaises(ValueError, Parameters, 2, [1, 2, -2], 2, np.array([0]), mock, mock, mock)
 
-
     def test_negative_update_radius(self):
-
         # setting up mock object
         mock = np.ones(10).astype(np.float32)
         self.assertRaises(ValueError, Parameters, 2, [1, 2, 3], -2, np.array([0]), mock, mock, mock)

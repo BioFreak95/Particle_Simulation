@@ -30,7 +30,6 @@ cell_shift_list = np.array([
 
 @jitclass(specs)
 class EnergyCalculator:
-
     # - - - constructor - - - #
 
     def __init__(self, box, cutoff_radius, es_sigma, charges, lj_sigmas, lj_epsilons, k_vector):
@@ -47,15 +46,15 @@ class EnergyCalculator:
         self.charges = charges.astype(np.float32)
         self.lj_sigmas = lj_sigmas.astype(np.float64)
         self.lj_epsilons = lj_epsilons.astype(np.float64)
-        self.k_vector = k_vector
+        self.k_vector = k_vector.astype(np.int64)
 
         self.cell_neighbour_list = np.zeros((1, 1, 1), dtype=np.int32)
 
         # constants (same every simulation)
-        VACUUM_PERMITTIVITY =  8.854187817 * 10 ** (-12)
+        VACUUM_PERMITTIVITY = 8.854187817 * 10 ** (-12)
         ELEMENTARY_CHARGE_SQUARED = 1.602176620898 * 10 ** (-38)
 
-        self.UNIT_PREFACTOR = 10 ** (9) * ELEMENTARY_CHARGE_SQUARED / VACUUM_PERMITTIVITY # same for selfinteraction
+        self.UNIT_PREFACTOR = 10 ** (9) * ELEMENTARY_CHARGE_SQUARED / VACUUM_PERMITTIVITY  # same for selfinteraction
 
     # - - - public methods - - - #
 
@@ -84,21 +83,29 @@ class EnergyCalculator:
                         if self.cell_neighbour_list[k][i][1] == 0:
                             if particle_index_1 < particle_index_2:
 
-                                particle_distance = self._calculate_norm(self.particle_positions[particle_index_1] - self.particle_positions[particle_index_2])
+                                particle_distance = self._calculate_norm(
+                                    self.particle_positions[particle_index_1] - self.particle_positions[
+                                        particle_index_2])
                                 if particle_distance < self.cutoff_radius:
-                                    lj_energy += self._calculate_lj_potential(particle_index_1, particle_index_2, particle_distance)
-                                    short_ranged_energy += self._calculate_shortranged_potential(particle_index_1, particle_index_2, particle_distance)
+                                    lj_energy += self._calculate_lj_potential(particle_index_1, particle_index_2,
+                                                                              particle_distance)
+                                    short_ranged_energy += self._calculate_shortranged_potential(particle_index_1,
+                                                                                                 particle_index_2,
+                                                                                                 particle_distance)
 
                         elif self.cell_neighbour_list[k][i][1] != 0:
                             if particle_index_1 != particle_index_2:
 
                                 box_shift = self._determine_box_shift(i, k)
-                                particle_distance = self._calculate_norm(self.particle_positions[particle_index_1] - (self.particle_positions[particle_index_2] + box_shift))
+                                particle_distance = self._calculate_norm(self.particle_positions[particle_index_1] - (
+                                    self.particle_positions[particle_index_2] + box_shift))
 
                                 if particle_distance != self.cutoff_radius:
-
-                                    lj_energy += self._calculate_lj_potential(particle_index_1, particle_index_2, particle_distance)
-                                    short_ranged_energy += self._calculate_shortranged_potential(particle_index_1, particle_index_2, particle_distance)
+                                    lj_energy += self._calculate_lj_potential(particle_index_1, particle_index_2,
+                                                                              particle_distance)
+                                    short_ranged_energy += self._calculate_shortranged_potential(particle_index_1,
+                                                                                                 particle_index_2,
+                                                                                                 particle_distance)
 
                         particle_index_2 = self.particle_neighbour_list[particle_index_2]
                 particle_index_1 = self.particle_neighbour_list[particle_index_1]
@@ -155,7 +162,8 @@ class EnergyCalculator:
         charge_1 = self.charges[particle_index_1]
         charge_2 = self.charges[particle_index_2]
 
-        short_ranged_potential = ((charge_1 * charge_2) / particle_distance) * math.erfc((particle_distance) / (np.sqrt(2) * self.es_sigma))
+        short_ranged_potential = ((charge_1 * charge_2) / particle_distance) * math.erfc(
+            (particle_distance) / (np.sqrt(2) * self.es_sigma))
 
         return short_ranged_potential
 
@@ -173,7 +181,7 @@ class EnergyCalculator:
 
         return dot_product
 
-    def _wrap_distance(self,distance):
+    def _wrap_distance(self, distance):
 
         for i in range(len(distance)):
             while distance[i] >= 0.5 * self.box[i]:
@@ -222,7 +230,8 @@ class EnergyCalculator:
 
         for i in range(0, len(self.particle_positions) - 1):
             for j in range(i + 1, len(self.particle_positions)):
-                particle_distance = self._calculate_norm(self._wrap_distance(self.particle_positions[i] - self.particle_positions[j]))
+                particle_distance = self._calculate_norm(
+                    self._wrap_distance(self.particle_positions[i] - self.particle_positions[j]))
 
                 if particle_distance < self.cutoff_radius:
                     lj_energy += self._calculate_lj_potential(i, j, particle_distance)

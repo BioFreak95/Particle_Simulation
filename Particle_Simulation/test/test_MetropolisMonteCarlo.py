@@ -9,7 +9,6 @@ from Particle_Simulation.MetropolisMonteCarlo import MetropolisMonteCarlo
 
 
 class test_MetropolisMonteCarlo(unittest.TestCase):
-
     def test_evaluate_trial_configuration_greedy_1(self):
 
         # set test parameters
@@ -30,7 +29,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         trial_system = System(particles=particles, parameters=para)
         trial_system.energy.overall_energy = 1.1
 
-        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system, trial_system)
 
         npt.assert_equal(actual, system)
 
@@ -54,7 +53,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         trial_system = System(particles=particles, parameters=para)
         trial_system.energy.overall_energy = 1.1
 
-        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system, trial_system)
 
         npt.assert_equal(actual, trial_system)
 
@@ -78,10 +77,10 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         trial_system = System(particles=particles, parameters=para)
         trial_system.energy.overall_energy = 1
 
-        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system,trial_system)
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration_greedy(system, trial_system)
 
         npt.assert_equal(actual, trial_system)
-        
+
     def test_evaluate_trial_configuration_1(self):
 
         # set test parameters
@@ -102,7 +101,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         trial_system = System(particles=particles, parameters=para)
         trial_system.energy.overall_energy = 1
 
-        actual = MetropolisMonteCarlo.evaluate_trial_configuration(system,trial_system, para)
+        actual = MetropolisMonteCarlo.evaluate_trial_configuration(system, trial_system, para)
 
         npt.assert_equal(actual, trial_system)
 
@@ -217,5 +216,4 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
             distances.append(np.linalg.norm(position - trial_position))
 
         distances = np.array(distances)
-        npt.assert_approx_equal(distances.sum()/10000, 0.5, significant=2)
-
+        npt.assert_approx_equal(distances.sum() / 10000, 0.5, significant=2)

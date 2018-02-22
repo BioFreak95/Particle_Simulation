@@ -14,13 +14,14 @@ class MetropolisMonteCarlo:
         update_probability = parameters.update_probability
         trial_particles = []
 
-        for i in range (n_particles):
+        for i in range(n_particles):
             trial_particles.append(Particle(np.zeros(len(system.particles[0].position))))
 
         for i in range(0, n_particles):
             random_number = np.random.rand(1)[0]
             if random_number <= update_probability:
-                trial_particles[i].position = MetropolisMonteCarlo._generate_trial_position(system.particles[i].position, parameters)
+                trial_particles[i].position = MetropolisMonteCarlo._generate_trial_position(
+                    system.particles[i].position, parameters)
             else:
                 trial_particles[i].position = system.particles[i].position
 

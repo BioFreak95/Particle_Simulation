@@ -7,8 +7,8 @@ from Particle_Simulation.System import System
 from Particle_Simulation.Simulation import Simulation
 from Particle_Simulation.Parameters import Parameters
 
-class ToolBox:
 
+class ToolBox:
     @staticmethod
     def plot_overall_energy_trend(trajectory):
 
@@ -91,37 +91,38 @@ class ToolBox:
         ax.set_zlim3d(0, system.neighbourlist.box_space[2])
         Axes3D.scatter(ax, x, y, z, c=colours)
         plt.title("System")
-        #ax.legend(['Sodium','Chloride'], loc='upper right')
+        # ax.legend(['Sodium','Chloride'], loc='upper right')
 
         plt.show()
 
+    @staticmethod
     def get_inputs(file_path):
-        #Load arrays from .npz file
-        with np.load(file_path) as fh :
+        # Load arrays from .npz file
+        with np.load(file_path) as fh:
             box = fh['box']
             particle_positions = fh['positions']
             types = fh['types']
             readme = fh['readme']
-            #scalarization (parameters.npy to dictionary)
+            # scalarization (parameters.npy to dictionary)
             parameters = fh['parameters'].item()
-            #fetch values from dictionary and create input ndarrays
+            # fetch values from dictionary and create input ndarrays
             prmtr_vals = []
             for i in range(len(types)):
                 prmtr_vals.append(parameters.get(types[i]))
             prmtr_vals = np.asarray(prmtr_vals)
-            
+
             name = types
-            lj_sigmas = prmtr_vals[ : , 0]
-            lj_epsilons = prmtr_vals[ : , 1]
-            mass = prmtr_vals[ : , 2]
-            charges = prmtr_vals[ : , 3]
-            #Particle object:
+            lj_sigmas = prmtr_vals[:, 0]
+            lj_epsilons = prmtr_vals[:, 1]
+            mass = prmtr_vals[:, 2]
+            charges = prmtr_vals[:, 3]
+            # Particle object:
             particle_list = []
             for i in range(len(particle_positions)):
                 particle_obj = Particle(position=particle_positions[i])
                 particle_list.append(particle_obj)
             particle = np.array(particle_list)
-            
+
             return particle, box, particle_positions, types, name, lj_sigmas, lj_epsilons, mass, charges, readme
 
     @staticmethod
@@ -161,3 +162,30 @@ class ToolBox:
         simulation = Simulation(system, parameters)
 
         return simulation
+
+    @staticmethod
+    def save_system(system, parameters, num):
+
+        x = []
+        y = []
+        z = []
+        colours = []
+        for i in range(len(system.particles)):
+            x.append(system.particles[i].position[0])
+            y.append(system.particles[i].position[1])
+            z.append(system.particles[i].position[2])
+
+            if parameters.charges[i] == 1:
+                colours.append('b')
+            elif parameters.charges[i] == -1:
+                colours.append('g')
+
+        ax = plt.axes(projection='3d')
+        ax.set_xlim3d(0, system.neighbourlist.box_space[0])
+        ax.set_ylim3d(0, system.neighbourlist.box_space[1])
+        ax.set_zlim3d(0, system.neighbourlist.box_space[2])
+        Axes3D.scatter(ax, x, y, z, c=colours)
+        plt.title("System")
+        # ax.legend(['Sodium','Chloride'], loc='upper right')
+
+        plt.savefig('tmp/sys' + str(num) + '.png')
