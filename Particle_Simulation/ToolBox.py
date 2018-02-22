@@ -191,5 +191,44 @@ class ToolBox:
         plt.savefig('tmp/sys' + str(num) + '.png')
 
     @staticmethod
-    def RDF():
-        NotImplementedError
+    def _wrap_distance(distance, box):
+        for i in range(len(distance)):
+            while distance[i] >= 0.5 * box[i]:
+                distance[i] -= box[i]
+            while distance[i] < -0.5 * box[i]:
+                distance[i] += box[i]
+
+        return distance
+
+    @staticmethod
+    def calculate_rdf(system, parameters, steprange, thickness):
+        # rang = int(np.floor((np.sum(parameters.box) / len(parameters.box)) / steprange))
+        rang = 3000
+
+        distances = np.zeros(rang)
+        particle_neighbors = np.zeros(rang)
+
+        particle = system.particles[0]
+        shell_thickness = thickness
+
+        for i in range(rang):
+
+            distance = steprange * i
+            for j in range(1, len(system.particles)):
+                particle_distance = np.linalg.norm(
+                    ToolBox._wrap_distance(np.asarray(particle.position) - np.asarray(system.particles[j].position),
+                                           parameters.box))
+                if particle_distance > distance and particle_distance < distance + shell_thickness and \
+                                parameters.charges[0] != parameters.charges[j]:
+                    particle_neighbors[i] += 1
+
+            particle_neighbors[i] = particle_neighbors[i] / (
+                4 / 3 * np.pi * ((distance + shell_thickness) ** 3 - (distance) ** 3))
+            distances[i] = distance
+
+        rdf = particle_neighbors / (len(system.particles) / np.prod(parameters.box))
+
+        plt.plot(distances, rdf)
+        plt.xlabel("Distance")
+        plt.ylabel("RDF")
+        plt.show()
