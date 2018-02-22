@@ -116,7 +116,7 @@ class Parameters:
         return cutoff
 
     def _calculate_update_radius(self):
-        update_radius = np.sum(self.box) / (len(self.box) * 75)
+        update_radius = np.sum(self.box) / len(self.box) * 0.0005
         return update_radius
 
     def calc_es_sigma(self):

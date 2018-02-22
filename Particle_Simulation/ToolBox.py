@@ -189,3 +189,7 @@ class ToolBox:
         # ax.legend(['Sodium','Chloride'], loc='upper right')
 
         plt.savefig('tmp/sys' + str(num) + '.png')
+
+    @staticmethod
+    def RDF():
+        NotImplementedError
