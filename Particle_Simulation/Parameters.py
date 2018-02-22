@@ -8,21 +8,18 @@ class Parameters:
         [0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1]])
 
-    def __init__(self, temperature, box, es_sigma, update_radius, update_probability, charges, lj_sigmas, lj_epsilons,
+    def __init__(self, temperature, box, update_radius, update_probability, charges, lj_sigmas, lj_epsilons,
                  accuracy=10, cutoff=0):
         if temperature < 0:
             raise ValueError('Temperature cant be negative.')
         for i in box:
             if i < 0:
                 raise ValueError('boxsize can not be negative.')
-        if es_sigma < 0:
-            raise ValueError('es_sigma can not be negative.')
         if update_radius < 0:
             raise ValueError('update_radius can not be negative.')
 
         self.temperature = temperature
         self.box = box
-        self.es_sigma = es_sigma
         self.update_radius = update_radius
         self.update_probability = update_probability
         self.accuracy = accuracy
@@ -34,6 +31,8 @@ class Parameters:
 
         self.K_cutoff = self.calc_Kcutoff()
         self.k_vector = self.calc_kvector()
+
+        self.es_sigma = self.calc_es_sigma()
 
         self.charges = charges
         self.lj_sigmas = lj_sigmas
@@ -112,3 +111,7 @@ class Parameters:
     def calc_Kcutoff(self):
         cutoff = (2 * self.accuracy) / self.cutoff_radius
         return cutoff
+
+    def calc_es_sigma(self):
+        es_sigma = self.cutoff_radius / (np.sqrt(2 * self.accuracy))
+        return es_sigma

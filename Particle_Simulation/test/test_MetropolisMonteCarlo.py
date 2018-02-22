@@ -17,7 +17,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -41,7 +41,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -65,7 +65,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -89,7 +89,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -115,7 +115,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -132,7 +132,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -150,7 +150,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -168,7 +168,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -187,7 +187,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 
@@ -207,7 +207,7 @@ class test_MetropolisMonteCarlo(unittest.TestCase):
         lj_sigmas = np.ones(10).astype(np.float32)
         lj_epsilons = np.ones(10).astype(np.float32)
 
-        para = Parameters(temperature=1, box=np.array([1, 1, 1]), es_sigma=1, update_radius=1,
+        para = Parameters(temperature=1, box=np.array([1, 1, 1]), update_radius=1,
                           charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons,
                           update_probability=0.5, accuracy=1)
 

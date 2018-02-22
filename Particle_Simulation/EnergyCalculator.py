@@ -13,7 +13,7 @@ specs = [
     ('box', float64[:]),
     ('cutoff_radius', float32),
     ('es_sigma', float32),
-    ('k_vector', int32[:, :]),
+    ('k_vector', int64[:, :]),
 
     ('charges', float32[:]),
     ('lj_sigmas', float32[:]),
