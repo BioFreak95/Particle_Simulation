@@ -8,7 +8,7 @@ class Parameters:
         [0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1]])
 
-    def __init__(self, temperature, box, es_sigma,  charges, lj_sigmas, lj_epsilons,
+    def __init__(self, temperature, box, charges, lj_sigmas, lj_epsilons,
                  update_probability=0.75, update_radius=0, accuracy=10, cutoff=0):
         if temperature < 0:
             raise ValueError('Temperature cant be negative.')
@@ -22,7 +22,7 @@ class Parameters:
 
         self.temperature = temperature
         self.box = box
-        self.es_sigma = es_sigma
+        self.es_sigma = self.calc_es_sigma()
         self.update_probability = update_probability
         self.accuracy = accuracy
 
@@ -120,3 +120,7 @@ class Parameters:
     def _calculate_update_radius(self):
         update_radius = np.sum(self.box)/(len(self.box) * 20)
         return update_radius
+
+    def calc_es_sigma(self):
+        es_sigma = self.cutoff_radius / (np.sqrt(2 * self.accuracy))
+        return es_sigma
