@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+
 from Particle_Simulation.Particle import Particle
+from Particle_Simulation.System import System
+from Particle_Simulation.Simulation import Simulation
+from Particle_Simulation.Parameters import Parameters
 
 class ToolBox:
 
@@ -65,20 +69,32 @@ class ToolBox:
         plt.show()
 
     @staticmethod
-    def plot_system(system):
+    def plot_system(system, parameters):
 
         x = []
         y = []
         z = []
+        colours = []
         for i in range(len(system.particles)):
             x.append(system.particles[i].position[0])
             y.append(system.particles[i].position[1])
             z.append(system.particles[i].position[2])
 
+            if parameters.charges[i] == 1:
+                colours.append('b')
+            elif parameters.charges[i] == -1:
+                colours.append('g')
+
         ax = plt.axes(projection='3d')
-        Axes3D.scatter(ax, x, y, z)
+        ax.set_xlim3d(0, system.neighbourlist.box_space[0])
+        ax.set_ylim3d(0, system.neighbourlist.box_space[1])
+        ax.set_zlim3d(0, system.neighbourlist.box_space[2])
+        Axes3D.scatter(ax, x, y, z, c=colours)
+        plt.title("System")
+        #ax.legend(['Sodium','Chloride'], loc='upper right')
+
         plt.show()
-        
+
     def get_inputs(file_path):
         #Load arrays from .npz file
         with np.load(file_path) as fh :
@@ -107,3 +123,41 @@ class ToolBox:
             particle = np.array(particle_list)
             
             return particle, box, particle_positions, types, name, lj_sigmas, lj_epsilons, mass, charges, readme
+
+    @staticmethod
+    def setup_random_simulation(box_length):
+
+        cr = []
+        for i in range(box_length):
+            cr.append(i + 0.5)
+
+        x, y, z = np.meshgrid(cr, cr, cr)
+        xyz = np.vstack((x.flat, y.flat, z.flat))
+        xyz = np.ascontiguousarray(xyz)
+
+        particles = []
+        for i in range(len(xyz[0, :])):
+            particles.append(Particle(np.array(xyz[:, i])))
+
+        charges = np.zeros(len(particles))
+        lj_sigmas = np.zeros(len(particles))
+        lj_epsilons = np.zeros(len(particles))
+
+        avogadro_constant = 6.02214085774 * 10 ** (23)
+        for i in range(len(particles)):
+            if i % 2 == 0:
+                charges[i] = 1
+                lj_sigmas[i] = 0.33
+                lj_epsilons[i] = 11.6 / avogadro_constant
+            elif i % 2 == 1:
+                charges[i] = -1
+                lj_sigmas[i] = 0.44
+                lj_epsilons[i] = 418.4 / avogadro_constant
+
+        parameters = Parameters(temperature=300, box=np.array([box_length, box_length, box_length]),
+                                charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons, accuracy=10)
+
+        system = System(particles, parameters)
+        simulation = Simulation(system, parameters)
+
+        return simulation
