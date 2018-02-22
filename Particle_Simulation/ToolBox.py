@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-from Particle import Particle
-from System import System
-from Simulation import Simulation
-from Parameters import Parameters
+from Particle_Simulation.Particle import Particle
+from Particle_Simulation.System import System
+from Particle_Simulation.Simulation import Simulation
+from Particle_Simulation.Parameters import Parameters
 
 class ToolBox:
 
