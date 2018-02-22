@@ -11,7 +11,6 @@ class System:
     def __init__(self, particles, parameters):
         self.particles = particles
         self.energy = Energy()
-        self.k_vectors = [1, 1, 1]
 
         particle_positions = self.get_particle_position_array()
 
