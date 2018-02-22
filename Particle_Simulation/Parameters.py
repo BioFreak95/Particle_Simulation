@@ -8,37 +8,42 @@ class Parameters:
         [0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1, 0, 0, 0, 1, 1, -1, -1, 1, -1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1]])
 
-    def __init__(self, temperature, box, update_radius, update_probability, charges, lj_sigmas, lj_epsilons,
-                 accuracy=10, cutoff=0):
+    def __init__(self, temperature, box, es_sigma,  charges, lj_sigmas, lj_epsilons,
+                 update_probability=0.75, update_radius=0, accuracy=10, cutoff=0):
         if temperature < 0:
             raise ValueError('Temperature cant be negative.')
         for i in box:
             if i < 0:
                 raise ValueError('boxsize can not be negative.')
+        if es_sigma < 0:
+            raise ValueError('es_sigma can not be negative.')
         if update_radius < 0:
             raise ValueError('update_radius can not be negative.')
 
         self.temperature = temperature
         self.box = box
-        self.update_radius = update_radius
+        self.es_sigma = es_sigma
         self.update_probability = update_probability
         self.accuracy = accuracy
 
+        if update_radius == 0:
+            self.update_radius = self._calculate_update_radius()
+        else:
+            self.update_radius = update_radius
+
         if cutoff == 0:
-            self.cutoff_radius = self.calc_cutoff()
+            self.cutoff_radius = self._calculate_cutoff()
         else:
             self.cutoff_radius = cutoff
 
-        self.K_cutoff = self.calc_Kcutoff()
-        self.k_vector = self.calc_kvector()
-
-        self.es_sigma = self.calc_es_sigma()
+        self.K_cutoff = self._calculate_K_cutoff()
+        self.k_vector = self._calculate_k_vector()
 
         self.charges = charges
         self.lj_sigmas = lj_sigmas
         self.lj_epsilons = lj_epsilons
 
-    def calc_3Dkvector(self):
+    def _calculate_3D_k_vector(self):
         k_vectors = []
         for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
             for j in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
@@ -57,7 +62,7 @@ class Parameters:
         k_vectors.remove([0, 0, 0])
         return k_vectors
 
-    def calc_2Dkvector(self):
+    def _calculate_2D_k_vector(self):
         k_vectors = []
         for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
             for j in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
@@ -75,7 +80,7 @@ class Parameters:
         k_vectors.remove([0, 0])
         return k_vectors
 
-    def calc_1Dkvector(self):
+    def _calculate_1D_k_vector(self):
         k_vectors = []
         for i in range(int(np.floor(-self.K_cutoff)), int(np.ceil(self.K_cutoff + 1))):
             k_vector = [i]
@@ -92,26 +97,26 @@ class Parameters:
         k_vectors.remove([0])
         return k_vectors
 
-    def calc_kvector(self):
+    def _calculate_k_vector(self):
         dim = len(self.box)
         k_vectors = []
         if dim == 3:
-            k_vectors = self.calc_3Dkvector()
+            k_vectors = self._calculate_3D_k_vector()
         if dim == 2:
-            k_vectors = self.calc_2Dkvector()
+            k_vectors = self._calculate_2D_k_vector()
         if dim == 1:
-            k_vectors = self.calc_1Dkvector()
+            k_vectors = self._calculate_1D_k_vector()
         return np.array(k_vectors)
 
-    def calc_cutoff(self):
+    def _calculate_cutoff(self):
         boxlength = max(self.box)
-        cutoff = 0.49 * boxlength
+        cutoff = 0.5 * boxlength
         return cutoff
 
-    def calc_Kcutoff(self):
+    def _calculate_K_cutoff(self):
         cutoff = (2 * self.accuracy) / self.cutoff_radius
         return cutoff
 
-    def calc_es_sigma(self):
-        es_sigma = self.cutoff_radius / (np.sqrt(2 * self.accuracy))
-        return es_sigma
+    def _calculate_update_radius(self):
+        update_radius = np.sum(self.box)/(len(self.box) * 20)
+        return update_radius
