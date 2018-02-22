@@ -1,16 +1,14 @@
-import matplotlib
-matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-from Particle_Simulation.Particle import Particle
-from Particle_Simulation.System import System
-from Particle_Simulation.Simulation import Simulation
-from Particle_Simulation.Parameters import Parameters
-
+from Particle import Particle
+from System import System
+from Simulation import Simulation
+from Parameters import Parameters
 
 class ToolBox:
+
     @staticmethod
     def plot_overall_energy_trend(trajectory):
 
@@ -93,38 +91,38 @@ class ToolBox:
         ax.set_zlim3d(0, system.neighbourlist.box_space[2])
         Axes3D.scatter(ax, x, y, z, c=colours)
         plt.title("System")
-        # ax.legend(['Sodium','Chloride'], loc='upper right')
+        #ax.legend(['Sodium','Chloride'], loc='upper right')
 
         plt.show()
 
     @staticmethod
     def get_inputs(file_path):
-        # Load arrays from .npz file
-        with np.load(file_path) as fh:
+        #Load arrays from .npz file
+        with np.load(file_path) as fh :
             box = fh['box']
             particle_positions = fh['positions']
             types = fh['types']
             readme = fh['readme']
-            # scalarization (parameters.npy to dictionary)
+            #scalarization (parameters.npy to dictionary)
             parameters = fh['parameters'].item()
-            # fetch values from dictionary and create input ndarrays
+            #fetch values from dictionary and create input ndarrays
             prmtr_vals = []
             for i in range(len(types)):
                 prmtr_vals.append(parameters.get(types[i]))
             prmtr_vals = np.asarray(prmtr_vals)
-
+            
             name = types
-            lj_sigmas = prmtr_vals[:, 0]
-            lj_epsilons = prmtr_vals[:, 1]
-            mass = prmtr_vals[:, 2]
-            charges = prmtr_vals[:, 3]
-            # Particle object:
+            lj_sigmas = prmtr_vals[ : , 0]
+            lj_epsilons = prmtr_vals[ : , 1]
+            mass = prmtr_vals[ : , 2]
+            charges = prmtr_vals[ : , 3]
+            #Particle object:
             particle_list = []
             for i in range(len(particle_positions)):
                 particle_obj = Particle(position=particle_positions[i])
                 particle_list.append(particle_obj)
             particle = np.array(particle_list)
-
+            
             return particle, box, particle_positions, types, name, lj_sigmas, lj_epsilons, mass, charges, readme
 
     @staticmethod
@@ -166,28 +164,36 @@ class ToolBox:
         return simulation
 
     @staticmethod
-    def save_system(system, parameters, num):
+    def _wrap_distance(distance, box):
+        for i in range(len(distance)):
+            while distance[i] >= 0.5 * box[i]:
+                distance[i] -= box[i]
+            while distance[i] < -0.5 * box[i]:
+                distance[i] += box[i]
 
-        x = []
-        y = []
-        z = []
-        colours = []
-        for i in range(len(system.particles)):
-            x.append(system.particles[i].position[0])
-            y.append(system.particles[i].position[1])
-            z.append(system.particles[i].position[2])
+        return distance
 
-            if parameters.charges[i] == 1:
-                colours.append('b')
-            elif parameters.charges[i] == -1:
-                colours.append('g')
+    @staticmethod
+    def calculate_rdf(system, box):
 
-        ax = plt.axes(projection='3d')
-        ax.set_xlim3d(0, system.neighbourlist.box_space[0])
-        ax.set_ylim3d(0, system.neighbourlist.box_space[1])
-        ax.set_zlim3d(0, system.neighbourlist.box_space[2])
-        Axes3D.scatter(ax, x, y, z, c=colours)
-        plt.title("System")
-        # ax.legend(['Sodium','Chloride'], loc='upper right')
+        distances = np.zeros(3000)
+        particle_neighbors = np.zeros(3000)
 
-        plt.savefig('tmp/sys' + str(num) + '.png')
+        particle = system.particles[0]
+        shell_thickness = 0.01
+
+        for i in range(3000):
+
+            distance = 0.001 * i
+            for j in range(1, len(system.particles)):
+                particle_distance = np.linalg.norm(ToolBox._wrap_distance(particle.position - system.particles[j].position, box))
+                if particle_distance > distance and particle_distance < distance + shell_thickness:
+                    particle_neighbors[i] += 1
+
+            particle_neighbors[i] = particle_neighbors[i] / (4 / 3 * np.pi * ((distance + shell_thickness) ** 3 - (distance) ** 3))
+            distances[i] = distance
+
+        rdf = particle_neighbors / (len(system.particles) / np.prod(box))
+
+        plt.plot(distances, rdf)
+        plt.show()
