@@ -26,6 +26,7 @@ class test_ToolBox(unittest.TestCase):
         ref_charges = np.array([1, -1, -1, 1 ])
         ref_mass = np.array([22.9898, 35.453, 35.453, 22.9898])
         particle, box, particle_positions, types, name, lj_sigmas, lj_epsilons, mass, charges, readme = ToolBox.get_inputs(file_path)
+
         #assert statements
         npt.assert_equal(particle[0].position, ref_position[0], 'Failed', verbose=True)
         npt.assert_equal(ref_position, particle_positions, 'Failed', verbose=True)

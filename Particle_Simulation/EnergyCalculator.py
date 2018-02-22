@@ -16,8 +16,8 @@ specs = [
     ('k_vector', int64[:, :]),
 
     ('charges', float32[:]),
-    ('lj_sigmas', float32[:]),
-    ('lj_epsilons', float32[:]),
+    ('lj_sigmas', float64[:]),
+    ('lj_epsilons', float64[:]),
 
     ('UNIT_PREFACTOR', float64),
 ]
@@ -45,8 +45,8 @@ class EnergyCalculator:
         self.cutoff_radius = cutoff_radius
         self.es_sigma = es_sigma
         self.charges = charges.astype(np.float32)
-        self.lj_sigmas = lj_sigmas.astype(np.float32)
-        self.lj_epsilons = lj_epsilons.astype(np.float32)
+        self.lj_sigmas = lj_sigmas.astype(np.float64)
+        self.lj_epsilons = lj_epsilons.astype(np.float64)
         self.k_vector = k_vector
 
         self.cell_neighbour_list = np.zeros((1, 1, 1), dtype=np.int32)
