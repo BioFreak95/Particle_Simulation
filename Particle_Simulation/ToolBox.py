@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-from Particle_Simulation.Particle import Particle
-from Particle_Simulation.System import System
-from Particle_Simulation.Simulation import Simulation
-from Particle_Simulation.Parameters import Parameters
+from Particle import Particle
+from System import System
+from Simulation import Simulation
+from Parameters import Parameters
 
 class ToolBox:
 
@@ -154,7 +154,7 @@ class ToolBox:
                 lj_sigmas[i] = 0.44
                 lj_epsilons[i] = 418.4 / avogadro_constant
 
-        parameters = Parameters(temperature=300, box=np.array([box_length, box_length, box_length]), es_sigma=0.223,
+        parameters = Parameters(temperature=300, box=np.array([box_length, box_length, box_length]),
                                 charges=charges, lj_sigmas=lj_sigmas, lj_epsilons=lj_epsilons, accuracy=10)
 
         system = System(particles, parameters)

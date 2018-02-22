@@ -15,14 +15,11 @@ class Parameters:
         for i in box:
             if i < 0:
                 raise ValueError('boxsize can not be negative.')
-        if es_sigma < 0:
-            raise ValueError('es_sigma can not be negative.')
         if update_radius < 0:
             raise ValueError('update_radius can not be negative.')
 
         self.temperature = temperature
         self.box = box
-        self.es_sigma = self.calc_es_sigma()
         self.update_probability = update_probability
         self.accuracy = accuracy
 
@@ -35,6 +32,8 @@ class Parameters:
             self.cutoff_radius = self._calculate_cutoff()
         else:
             self.cutoff_radius = cutoff
+
+        self.es_sigma = self.calc_es_sigma()
 
         self.K_cutoff = self._calculate_K_cutoff()
         self.k_vector = self._calculate_k_vector()
