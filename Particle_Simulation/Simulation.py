@@ -92,9 +92,9 @@ class Simulation:
         energy = Energy()
         short_ranged_energy = self.energy_calculator.calculate_shortranged_energy()
         energy.lj_energy = short_ranged_energy[0]
-        energy.es_shortranged_energy = 0  # short_ranged_energy[1]
-        energy.es_selfinteraction_energy = 0  # self.energy_calculator.calculate_selfinteraction_energy()
-        energy.es_longranged_energy = 0  # self.energy_calculator.calculate_longranged_energy()
+        energy.es_shortranged_energy = short_ranged_energy[1]
+        energy.es_selfinteraction_energy = self.energy_calculator.calculate_selfinteraction_energy()
+        energy.es_longranged_energy = self.energy_calculator.calculate_longranged_energy()
 
         energy.calculate_overall_energy()
 

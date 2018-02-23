@@ -30,7 +30,7 @@ for i in range(len(particle_positions)):
 particles = np.array(particles)
 
 # initialize parameters object
-parameters = Parameters(temperature=300, box=box, charges=charges, lj_epsilons=lj_epsilons, lj_sigmas=lj_sigmas,
+parameters = Parameters(temperature=200, box=box, charges=charges, lj_epsilons=lj_epsilons, lj_sigmas=lj_sigmas,
                         accuracy=2)
 
 
@@ -46,12 +46,13 @@ print("ES sigma: ", parameters.es_sigma)
 initial_system = System(particles, parameters)
 # ToolBox.plot_system(initial_system, parameters)
 
-steps_opt = 9000
-steps_sim = 1000
+steps_opt = 5000
+steps_sim = 2000
 
 simulation = Simulation(initial_system, parameters)
 simulation.parameters.update_radius = np.sum(simulation.parameters.box) / len(simulation.parameters.box) * 0.0005
 simulation.optimize(steps_opt)
+simulation.parameters.temperature = 1000
 simulation.parameters.update_radius = np.sum(simulation.parameters.box) / len(simulation.parameters.box) * 0.0005
 simulation.simulate(steps_sim)
 
