@@ -30,7 +30,7 @@ for i in range(len(particle_positions)):
 particles = np.array(particles)
 
 # initialize parameters object
-parameters = Parameters(temperature=200, box=box, charges=charges, lj_epsilons=lj_epsilons, lj_sigmas=lj_sigmas,
+parameters = Parameters(temperature=100, box=box, charges=charges, lj_epsilons=lj_epsilons, lj_sigmas=lj_sigmas,
                         accuracy=2)
 
 
@@ -60,6 +60,12 @@ i = 0
 j = 0
 ToolBox.plot_overall_energy_trend(simulation.opt_systems)
 ToolBox.plot_overall_energy_trend(simulation.sim_systems)
+
+# ToolBox.plot_energy_contribution_trend(simulation.opt_systems)
+# ToolBox.plot_energy_contribution_trend(simulation.sim_systems)
+# ToolBox.plot_es_energy_contribution_trend(simulation.opt_systems)
+# ToolBox.plot_es_energy_contribution_trend(simulation.sim_systems)
+
 
 ToolBox.plot_system(simulation.opt_systems[-1], simulation.parameters)
 
